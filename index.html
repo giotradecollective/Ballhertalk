@@ -335,6 +335,33 @@
   .ep-body h3{font-size:17px;font-weight:600;line-height:1.3;font-family:'Work Sans';}
   .ep-meta{font-size:12.5px;color:var(--ink-2);margin-top:8px;}
 
+  /* ---------- LIVE SCORES ---------- */
+  .scores-track{
+    display:flex;gap:18px;overflow-x:auto;padding-bottom:14px;
+    scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;
+  }
+  .scores-track::-webkit-scrollbar{height:6px;}
+  .scores-track::-webkit-scrollbar-thumb{background:var(--line);border-radius:6px;}
+  .score-card{
+    flex:0 0 250px;scroll-snap-align:start;
+    background:var(--paper);border:1px solid var(--line);
+    border-radius:18px;padding:18px 20px;
+  }
+  .score-league{
+    font-size:11px;font-weight:600;letter-spacing:0.03em;
+    color:var(--rose-dark);text-transform:uppercase;
+    margin-bottom:12px;display:flex;align-items:center;gap:6px;
+  }
+  .score-league .live-dot{
+    width:7px;height:7px;border-radius:50%;background:var(--pitch);
+    animation:pulse 1.6s ease-in-out infinite;
+  }
+  .score-row{display:flex;align-items:center;justify-content:space-between;padding:5px 0;}
+  .score-row .team{font-size:14.5px;font-weight:600;}
+  .score-row .num{font-family:'Fraunces',serif;font-size:18px;font-weight:600;}
+  .score-status{font-size:12px;color:var(--ink-2);margin-top:10px;}
+  .scores-empty{font-size:14px;color:var(--ink-2);padding:8px 0;}
+
   /* ---------- NEWS (dark panel) ---------- */
   .news-panel{
     background:var(--ink);color:var(--cream);
@@ -631,6 +658,22 @@
   </div>
 </section>
 
+<!-- LIVE SCORES -->
+<section class="section-pad" id="scores" style="padding-top:0;">
+  <div class="wrap">
+    <div class="section-head">
+      <div>
+        <span class="section-kicker">Powered by API-Football</span>
+        <h2>Live scores</h2>
+      </div>
+      <p class="section-note">EPL, PSL and Champions League — live when there's a match on, upcoming when there isn't.</p>
+    </div>
+    <div class="scores-track" id="scoresTrack">
+      <!-- score cards injected here -->
+    </div>
+  </div>
+</section>
+
 <!-- SOCCER NEWS -->
 <section class="section-pad" id="news">
   <div class="wrap">
@@ -759,7 +802,9 @@ const episodes = [
   {tag:"Interview", title:"A Sunday League Captain Tells All", dur:"61 min"},
 ];
 
-const headlines = [
+// Placeholder fallback — used only if /api/news isn't reachable yet
+// (e.g. functions not deployed, or the site is still just static HTML).
+const fallbackHeadlines = [
   {src:"BBC", text:"Title race tightens after weekend of shock results", time:"2h ago"},
   {src:"ESPN", text:"Star forward linked with January move abroad", time:"4h ago"},
   {src:"Sky", text:"Manager under pressure after fourth straight draw", time:"6h ago"},
@@ -839,17 +884,77 @@ episodes.forEach(e=>{
 });
 
 const headlinesList = document.getElementById('headlinesList');
-headlines.forEach(h=>{
-  headlinesList.appendChild(el(`
-    <div class="headline-item">
-      <div class="headline-src">${h.src}</div>
-      <div class="headline-text">
-        <h4>${h.text}</h4>
-        <div class="time">${h.time}</div>
+
+function renderHeadlines(list){
+  headlinesList.innerHTML = '';
+  list.forEach(h=>{
+    const item = el(`
+      <div class="headline-item">
+        <div class="headline-src">${h.src}</div>
+        <div class="headline-text">
+          <h4></h4>
+          <div class="time">${h.time || ''}</div>
+        </div>
       </div>
-    </div>
-  `));
-});
+    `);
+    const h4 = item.querySelector('h4');
+    if (h.link) {
+      const a = el(`<a href="${h.link}" target="_blank" rel="noopener"></a>`);
+      a.textContent = h.text;
+      h4.appendChild(a);
+    } else {
+      h4.textContent = h.text;
+    }
+    headlinesList.appendChild(item);
+  });
+}
+
+// Try the live news feed first; fall back to placeholder content if the
+// /api/news function isn't deployed yet or the request fails.
+fetch('/api/news')
+  .then(r => { if (!r.ok) throw new Error('bad response'); return r.json(); })
+  .then(data => {
+    if (data.headlines && data.headlines.length) renderHeadlines(data.headlines);
+    else renderHeadlines(fallbackHeadlines);
+  })
+  .catch(() => renderHeadlines(fallbackHeadlines));
+
+// ---- Live scores (API-Football via /api/scores) ----
+const scoresTrack = document.getElementById('scoresTrack');
+
+const STATUS_LABELS = {
+  NS: 'Kickoff', '1H': '1st half', HT: 'Half-time', '2H': '2nd half',
+  ET: 'Extra time', FT: 'Full-time', PEN: 'Penalties', PST: 'Postponed',
+};
+
+function renderScores(fixtures, mode){
+  scoresTrack.innerHTML = '';
+  if (!fixtures.length){
+    scoresTrack.appendChild(el(`<div class="scores-empty">No fixtures to show right now — check back later.</div>`));
+    return;
+  }
+  fixtures.forEach(f=>{
+    const isLive = mode === 'live';
+    const statusText = isLive
+      ? (f.elapsed ? `${f.elapsed}' · ${STATUS_LABELS[f.status] || f.status}` : (STATUS_LABELS[f.status] || f.status))
+      : new Date(f.kickoff).toLocaleString(undefined, {weekday:'short', hour:'2-digit', minute:'2-digit'});
+    scoresTrack.appendChild(el(`
+      <article class="score-card">
+        <div class="score-league">${isLive ? '<span class="live-dot"></span>' : ''} ${f.league || ''}</div>
+        <div class="score-row"><span class="team">${f.home}</span><span class="num">${f.scoreHome ?? ''}</span></div>
+        <div class="score-row"><span class="team">${f.away}</span><span class="num">${f.scoreAway ?? ''}</span></div>
+        <div class="score-status">${statusText}</div>
+      </article>
+    `));
+  });
+}
+
+fetch('/api/scores')
+  .then(r => { if (!r.ok) throw new Error('bad response'); return r.json(); })
+  .then(data => renderScores(data.fixtures || [], data.mode))
+  .catch(() => {
+    scoresTrack.appendChild(el(`<div class="scores-empty">Live scores aren't connected yet — deploy the /api/scores function with your API-Football key to turn this on.</div>`));
+  });
 
 const thoughtsList = document.getElementById('thoughtsList');
 thoughts.forEach(t=>{
