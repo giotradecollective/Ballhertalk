@@ -630,6 +630,15 @@
   font-size:11.5px;color:rgba(251,242,236,0.6);letter-spacing:.04em;font-family:'Work Sans';
 }
 .powered-by .pb-brand b{ color:var(--cream);font-weight:700; }
+
+/* ---------- BLURRED (prices + FAQ) — delete this block to reveal ---------- */
+.plan-price .amt,
+.plans-faq{
+  filter:blur(9px);
+  -webkit-filter:blur(9px);
+  user-select:none;-webkit-user-select:none;
+  pointer-events:none;
+}
 </style>
 </head>
 <body>
