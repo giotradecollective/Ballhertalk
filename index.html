@@ -1033,7 +1033,6 @@ section[id]{scroll-margin-top:0 !important;}
     <nav class="nav-links">
       <a href="#episodes">Episodes</a>
       <a href="#events">Events</a>
-      <a href="#merch">Shop</a>
       <a href="#about">About</a>
       <a href="login.html">Log in</a>
     </nav>
@@ -1047,7 +1046,6 @@ section[id]{scroll-margin-top:0 !important;}
   <nav class="mobile-menu" id="mobileMenu">
     <a href="#episodes">Episodes</a>
     <a href="#events">Events</a>
-    <a href="#merch">Shop</a>
     <a href="#about">About</a>
     <a href="login.html">Log in</a>
     <a href="plans.html" class="mobile-cta">Subscribe</a>
@@ -1073,7 +1071,6 @@ section[id]{scroll-margin-top:0 !important;}
           <span class="waveform" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
           <span class="player-label">Latest: "BallHerTalk Episode 1"</span>
         </a>
-        <a href="#merch" class="btn-primary">Browse Merch →</a>
       </div>
     </div>
   </div>
@@ -1125,24 +1122,6 @@ section[id]{scroll-margin-top:0 !important;}
         </div>
         <p class="clips-hint">Swipe to see more <span aria-hidden="true">&rarr;</span></p>
       </div>
-  </div>
-</section>
-
-<!-- MERCH -->
-<section class="section-pad" id="merch">
-  <div class="wrap">
-    <div class="section-head">
-      <div>
-        <span class="section-kicker">Rep the badge</span>
-        <h2>Browse <span class="scribble">merch</span></h2>
-      </div>
-      <a href="#" class="link-arrow">View full shop →</a>
-    </div>
-    <div class="merch-grid" id="merchGrid"></div>
-    <div class="merch-banner">
-      <p>New drop is being stitched together right now. Join the list to get first access.</p>
-      <a href="#" class="btn-primary" style="padding:12px 24px;">Get notified</a>
-    </div>
   </div>
 </section>
 
@@ -1223,7 +1202,6 @@ section[id]{scroll-margin-top:0 !important;}
         <h4>Explore</h4>
         <a href="#episodes">Episodes</a>
         <a href="#events">Events</a>
-        <a href="#merch">Shop</a>
         <a href="#about">About</a>
         <a href="plans.html">Subscribe</a>
       </div>
@@ -1236,7 +1214,7 @@ section[id]{scroll-margin-top:0 !important;}
       </div>
       <div class="footer-col">
         <h4>Get the newsletter</h4>
-        <p class="footer-tag" style="margin-bottom:6px;">Match reactions and merch drops, straight to your inbox.</p>
+        <p class="footer-tag" style="margin-bottom:6px;">Match reactions and new episodes, straight to your inbox.</p>
         <div class="newsletter-row">
           <input type="email" id="nlEmail" placeholder="you@email.com" aria-label="Email address" autocomplete="email">
           <button type="button" id="nlJoin">Join</button>
@@ -1361,22 +1339,6 @@ events.forEach((ev,i)=>{
   `));
 });
 
-const merchGrid = document.getElementById('merchGrid');
-merch.forEach(m=>{
-  merchGrid.appendChild(el(`
-    <article class="merch-card">
-      <div class="merch-thumb">
-        <span class="soon">Coming soon</span>
-        ${shapes[m.shape]}
-      </div>
-      <div class="merch-body">
-        <h3>${m.name}</h3>
-        <div class="merch-price">${m.price}</div>
-        <a href="#" class="merch-cta">Notify me</a>
-      </div>
-    </article>
-  `));
-});
 </script>
 
 
