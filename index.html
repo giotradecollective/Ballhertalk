@@ -822,6 +822,9 @@ header.site-nav.scrolled{background:rgba(251,242,236,.94);border-bottom-color:va
 .ticket-stub{gap:8px;}
 .ticket-stub .date-col{flex-direction:row;align-items:center;gap:6px;height:120px;}
 .ticket-stub .date-col .day{align-self:center;}
+.ticket-stub .date-col .month .yr{color:var(--cream);margin-top:.9em;display:inline-block;}
+.ticket-stub .date-col{height:176px;}
+.ticket-stub .barcode{height:176px !important;}
 .ticket-stub .date-col .day sup{font-family:'Work Sans',sans-serif;font-size:.42em;font-weight:600;line-height:1;vertical-align:baseline;position:relative;left:-.9em;margin-top:2px;}
 @media (max-width:520px){.ticket{flex-basis:88vw;grid-template-columns:1fr 104px;}.ticket-main{padding:24px 20px;}}
 
@@ -1295,7 +1298,7 @@ const episodes = [
 ];
 
 const events = [
-  {tag:"", title:"Simba SC vs Orlando Pirates FC Watch Party", loc:"Protea Hotel Midrand (Watch Party Area)<br>14th Street, Noordwyk Ext 20, Midrand, 1685, South Africa", month:"NOV", day:"28", time:"18:00", price:"General Admission", ticketed:true},
+  {tag:"", title:"Simba SC vs Orlando Pirates FC Watch Party", loc:"Protea Hotel Midrand (Watch Party Area)<br>14th Street, Noordwyk Ext 20, Midrand, 1685, South Africa", month:"NOV", day:"28", year:"2026", time:"18:00", price:"General Admission", ticketed:true},
   {tag:"Watch Party", title:"Derby Day Watch Party & Trivia Night", loc:"Field & Co Sports Bar", month:"OCT", day:"04", time:"3:00 PM", price:"R50 door"},
   {tag:"Meetup", title:"BallHerTalk x Local Women's League Meetup", loc:"City Sports Complex", month:"OCT", day:"22", time:"11:00 AM", price:"Free entry"},
 ];
@@ -1386,7 +1389,7 @@ events.forEach((ev,i)=>{
       <div class="ticket-stub">
         <div class="date-col">
           <span class="day">${ev.day}<sup>${(n=>{const d=n%100;return d>=11&&d<=13?"th":({1:"st",2:"nd",3:"rd"})[n%10]||"th"})(+ev.day)}</sup></span>
-          <span class="month">${MONTHS[ev.month]||ev.month}</span>
+          <span class="month">${MONTHS[ev.month]||ev.month}<span class="yr">${ev.year}</span></span>
         </div>
         <div class="barcode" aria-hidden="true"></div>
       </div>
