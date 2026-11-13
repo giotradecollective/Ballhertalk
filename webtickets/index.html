@@ -59,6 +59,10 @@ video{width:100%;height:100%;object-fit:cover;display:block;}
 .result .who{font:600 30px/1.2 'Work Sans',sans-serif;margin:0 0 6px;}
 .result .meta{font-size:16px;opacity:.92;margin:0 0 26px;}
 .result button{background:#fff;color:var(--ink);min-width:220px;}
+.powered-by{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:28px;padding-top:22px;border-top:1px solid var(--line);}
+.powered-by .pb-label{font-size:11px;color:#a79d92;letter-spacing:.02em;}
+.powered-by .pb-brand{font-size:11.5px;color:var(--ink2);letter-spacing:.04em;}
+.powered-by .pb-brand b{color:var(--ink);font-weight:700;}
 </style>
 </head>
 <body>
@@ -81,6 +85,10 @@ video{width:100%;height:100%;object-fit:cover;display:block;}
     <p class="hint">Point the camera at the ticket QR code</p>
     <div class="divider">or</div>
     <div class="row"><input id="manual" placeholder="Ticket code (BHT-…)" autocapitalize="characters" autocomplete="off"><button class="ghost" id="manualBtn" type="button">Check</button></div>
+  </div>
+  <div class="powered-by">
+    <span class="pb-label">Powered by</span>
+    <span class="pb-brand"><b>GIOTRADE</b> TECHNOLOGIES&reg;</span>
   </div>
 </div>
 
