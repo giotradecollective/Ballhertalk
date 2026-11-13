@@ -5,45 +5,67 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex, nofollow">
 <title>Door check-in · BallHerTalk</title>
+<meta name="theme-color" content="#ffffff">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600&family=Work+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--ink:#18140F;--cream:#FBF2EC;--rose:#D6567B;--roseD:#B93F62;--blush:#F0A8BC;--ok:#1E8E4E;--warn:#C77700;--bad:#B3261E;}
+:root{--ink:#18140F;--ink2:#6b6258;--cream:#FBF2EC;--paper:#FFFFFF;--line:#EADFD6;--rose:#D6567B;--roseD:#B93F62;--blush:#F0A8BC;--ok:#1E8E4E;--warn:#C77700;--bad:#B3261E;}
 *{box-sizing:border-box;}
-html,body{margin:0;min-height:100%;background:var(--ink);color:var(--cream);font-family:'Work Sans',system-ui,sans-serif;}
-body{padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);}
-.wrap{max-width:520px;margin:0 auto;padding:18px 0 28px;}
-h1{font:600 26px 'Fraunces',serif;margin:0 0 4px;}
-.sub{margin:0 0 18px;color:#b9b0a6;font-size:14px;}
-.card{background:#241E17;border-radius:22px;padding:20px;}
-label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:#d9d2c8;}
-input{width:100%;padding:14px 16px;border-radius:14px;border:1.5px solid #4a4036;background:#18140F;color:var(--cream);font:500 17px 'Work Sans',sans-serif;}
-input:focus{outline:none;border-color:var(--rose);}
-button{font:600 16px 'Work Sans',sans-serif;border:0;border-radius:999px;padding:14px 22px;cursor:pointer;}
-.primary{background:var(--rose);color:#fff;width:100%;margin-top:12px;}
-.ghost{background:#3a3128;color:var(--cream);}
-.err{color:#ff9b94;min-height:20px;font-size:14px;margin-top:8px;}
+html,body{margin:0;min-height:100%;background:var(--paper);color:var(--ink);font-family:'Work Sans',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+body{padding:env(safe-area-inset-top) 16px env(safe-area-inset-bottom);background:linear-gradient(180deg,#fff 0,#fff 60%,var(--cream) 100%) fixed;}
+.wrap{max-width:480px;margin:0 auto;padding:28px 0 36px;}
+.brand{display:flex;align-items:center;gap:10px;margin:0 0 22px;}
+.brand .logo{font:600 24px 'Fraunces',serif;letter-spacing:-.01em;}
+.brand .logo i{color:var(--rose);font-style:italic;}
+.brand .tag{margin-left:auto;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--roseD);background:#fde9ef;border-radius:999px;padding:6px 12px;}
+h1{font:600 32px/1.1 'Fraunces',serif;margin:0 0 8px;letter-spacing:-.01em;}
+.sub{margin:0 0 24px;color:var(--ink2);font-size:14.5px;line-height:1.5;}
+.sub b{color:var(--ink);font-weight:600;}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:0 18px 40px -28px rgba(24,20,15,.35);}
+label{display:block;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px;color:var(--ink2);}
+input{width:100%;padding:15px 16px;border-radius:14px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font:500 17px 'Work Sans',sans-serif;transition:border-color .2s,box-shadow .2s;}
+input::placeholder{color:#a79d92;}
+input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 4px rgba(214,86,123,.14);}
+button{font:600 16px 'Work Sans',sans-serif;border:0;border-radius:999px;padding:15px 22px;cursor:pointer;transition:transform .15s,background .2s;}
+button:active{transform:scale(.98);}
+button:disabled{opacity:.6;cursor:default;}
+.primary{background:var(--ink);color:#fff;width:100%;margin-top:14px;}
+.primary:hover{background:var(--rose);}
+.ghost{background:var(--cream);color:var(--ink);border:1px solid var(--line);}
+.ghost:hover{background:#f6e6dc;}
+.err{color:var(--bad);min-height:20px;font-size:14px;margin-top:10px;}
 #scanView{display:none;}
-.video-box{position:relative;border-radius:22px;overflow:hidden;background:#000;aspect-ratio:1/1;}
+.stats{display:flex;justify-content:space-between;align-items:center;margin:0 0 16px;padding:14px 18px;background:var(--cream);border-radius:18px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--ink2);}
+.stats .num{display:block;margin-top:2px;font:600 28px/1 'Fraunces',serif;letter-spacing:0;text-transform:none;color:var(--ink);}
+.stats .num b{font-weight:600;color:var(--rose);}
+.stats .num span{color:var(--ink2);font-size:20px;}
+.video-box{position:relative;border-radius:24px;overflow:hidden;background:#efe7e0;aspect-ratio:1/1;border:1px solid var(--line);}
 video{width:100%;height:100%;object-fit:cover;display:block;}
-.frame{position:absolute;inset:18%;border:3px solid rgba(255,255,255,.85);border-radius:22px;pointer-events:none;box-shadow:0 0 0 999px rgba(0,0,0,.35);}
-.stats{display:flex;justify-content:space-between;align-items:center;margin:0 0 14px;font-size:14px;color:#d9d2c8;}
-.stats b{color:#fff;font-size:18px;}
+.frame{position:absolute;inset:16%;pointer-events:none;}
+.frame i{position:absolute;width:34px;height:34px;border:4px solid #fff;filter:drop-shadow(0 0 3px rgba(0,0,0,.45));}
+.frame i:nth-child(1){top:0;left:0;border-right:0;border-bottom:0;border-top-left-radius:14px;}
+.frame i:nth-child(2){top:0;right:0;border-left:0;border-bottom:0;border-top-right-radius:14px;}
+.frame i:nth-child(3){bottom:0;left:0;border-right:0;border-top:0;border-bottom-left-radius:14px;}
+.frame i:nth-child(4){bottom:0;right:0;border-left:0;border-top:0;border-bottom-right-radius:14px;}
+.hint{text-align:center;color:var(--ink2);font-size:13.5px;margin:14px 0 0;}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0 4px;color:#a79d92;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line);}
 .row{display:flex;gap:10px;margin-top:12px;}
-.row input{flex:1;text-transform:uppercase;}
-.result{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;}
+.row input{flex:1;text-transform:uppercase;min-width:0;}
+.result{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;color:#fff;}
 .result.show{display:flex;}
 .result.valid{background:var(--ok);} .result.used{background:var(--warn);} .result.bad{background:var(--bad);}
-.result .big{font:600 44px/1.1 'Fraunces',serif;margin:0 0 10px;}
+.result .big{font:600 46px/1.1 'Fraunces',serif;margin:0 0 10px;}
 .result .who{font:600 30px/1.2 'Work Sans',sans-serif;margin:0 0 6px;}
 .result .meta{font-size:16px;opacity:.92;margin:0 0 26px;}
-.result button{background:#fff;color:var(--ink);min-width:200px;}
+.result button{background:#fff;color:var(--ink);min-width:220px;}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <h1>Door check-in</h1>
-  <p class="sub">Simba SC vs Orlando Pirates FC Watch Party · 28 Nov 2026</p>
+  <div class="brand"><span class="logo">ball <i>her</i> talk</span><span class="tag">Door check-in</span></div>
+  <h1>Check guests in</h1>
+  <p class="sub"><b>Simba SC vs Orlando Pirates FC Watch Party</b><br>28 Nov 2026 · Protea Hotel Midrand</p>
 
   <div class="card" id="loginView">
     <label for="pin">Staff PIN</label>
@@ -53,10 +75,12 @@ video{width:100%;height:100%;object-fit:cover;display:block;}
   </div>
 
   <div id="scanView">
-    <div class="stats"><span>Checked in: <b id="stIn">0</b> / <b id="stAll">0</b></span><button class="ghost" id="logout" type="button" style="padding:8px 16px;font-size:14px">Lock</button></div>
-    <div class="video-box"><video id="cam" playsinline muted></video><div class="frame"></div></div>
+    <div class="stats"><span>Checked in<span class="num"><b id="stIn">0</b> <span>/</span> <span id="stAll">0</span></span></span><button class="ghost" id="logout" type="button" style="padding:10px 18px;font-size:14px">Lock</button></div>
+    <div class="video-box"><video id="cam" playsinline muted></video><div class="frame"><i></i><i></i><i></i><i></i></div></div>
     <div class="err" id="camErr"></div>
-    <div class="row"><input id="manual" placeholder="Or type ticket code (BHT-…)" autocapitalize="characters" autocomplete="off"><button class="ghost" id="manualBtn" type="button">Check</button></div>
+    <p class="hint">Point the camera at the ticket QR code</p>
+    <div class="divider">or</div>
+    <div class="row"><input id="manual" placeholder="Ticket code (BHT-…)" autocapitalize="characters" autocomplete="off"><button class="ghost" id="manualBtn" type="button">Check</button></div>
   </div>
 </div>
 
