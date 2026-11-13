@@ -827,6 +827,39 @@ header.site-nav.scrolled{background:rgba(251,242,236,.94);border-bottom-color:va
 .ticket-stub .barcode{height:176px !important;}
 .ticket-stub .date-col .day sup{font-family:'Work Sans',sans-serif;font-size:.42em;font-weight:600;line-height:1;vertical-align:baseline;position:relative;left:-.9em;margin-top:2px;}
 @media (max-width:520px){.ticket{flex-basis:88vw;grid-template-columns:1fr 104px;}.ticket-main{padding:24px 20px;}}
+/* ---- ticket: fits every phone width (stub sizes to its content, countdown shrinks) ---- */
+.ticket{grid-template-columns:minmax(0,1fr) auto;}
+.ticket-main{min-width:0;}
+.ticket-stub{padding:14px 14px;}
+.tk-cd .tk-cd-box{flex:1 1 0;min-width:0;}
+.ticket .tk-buy{max-width:100%;}
+@media (max-width:520px){
+  .ticket{flex-basis:88vw;grid-template-columns:minmax(0,1fr) auto;}
+  .ticket-main{padding:22px 16px 22px 18px;}
+  .ticket-main h3{font-size:22px;}
+  .ticket-stub{padding:12px 10px;gap:6px;}
+  .ticket-stub .day{font-size:30px;}
+  .ticket-stub .date-col{gap:5px;}
+  .ticket-stub .barcode{width:26px;}
+  .ticket .tk-cd{gap:6px;}
+  .tk-cd .tk-cd-box{padding:8px 2px 7px;border-radius:10px;}
+  .tk-cd .tk-cd-n{font-size:20px;}
+  .tk-cd .tk-cd-l{font-size:9px;letter-spacing:.05em;}
+  .ticket .tk-buy{padding:13px 20px;font-size:14.5px;}
+}
+@media (max-width:380px){
+  .ticket-main{padding:18px 12px 18px 14px;}
+  .ticket-main h3{font-size:19px;}
+  .ticket-loc{font-size:12.5px;}
+  .ticket-stub{padding:10px 7px;gap:4px;}
+  .ticket-stub .day{font-size:25px;}
+  .ticket-stub .date-col .month{font-size:10px;letter-spacing:.14em;}
+  .ticket-stub .barcode{width:18px;}
+  .ticket .tk-cd{gap:4px;}
+  .tk-cd .tk-cd-n{font-size:17px;}
+  .tk-cd .tk-cd-l{font-size:8px;letter-spacing:.03em;}
+  .ticket .tk-buy{padding:12px 14px;font-size:13.5px;}
+}
 
 /* merch (stays black) */
 #merch{background:radial-gradient(60% 70% at 85% 0%,rgba(214,86,123,.3),transparent 62%),radial-gradient(50% 60% at 0% 100%,rgba(240,168,188,.14),transparent 65%),#000;}
@@ -1079,6 +1112,27 @@ section[id]{scroll-margin-top:0 !important;}
 .tk-dl:hover{background:var(--rose-dark);border-color:var(--rose-dark);}
 .tk-close{background:transparent;color:var(--ink);}
 .tk-close:hover{background:rgba(24,20,15,.07);}
+/* ---- FINAL ticket stub lock: date + month + year + barcode always visible on every phone ---- */
+.ticket{grid-template-columns:minmax(0,1fr) 128px;}
+.ticket .ticket-stub{box-sizing:border-box;width:100%;min-width:0;overflow:visible;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:8px;padding:12px 10px;}
+.ticket .ticket-stub .date-col{flex:0 0 auto;display:flex;flex-direction:row;align-items:center;justify-content:center;gap:6px;height:176px;}
+.ticket .ticket-stub .barcode{flex:0 0 auto;}
+@media (max-width:520px){
+  .ticket{grid-template-columns:minmax(0,1fr) 104px;}
+  .ticket .ticket-stub{gap:6px;padding:10px 7px;}
+  .ticket .ticket-stub .date-col{gap:4px;}
+  .ticket .ticket-stub .day{font-size:28px;}
+  .ticket .ticket-stub .date-col .month{font-size:11.5px;letter-spacing:.16em;}
+  .ticket .ticket-stub .barcode{width:24px;}
+}
+@media (max-width:380px){
+  .ticket{grid-template-columns:minmax(0,1fr) 88px;}
+  .ticket .ticket-stub{gap:4px;padding:8px 5px;}
+  .ticket .ticket-stub .date-col{gap:3px;}
+  .ticket .ticket-stub .day{font-size:23px;}
+  .ticket .ticket-stub .date-col .month{font-size:9.5px;letter-spacing:.12em;}
+  .ticket .ticket-stub .barcode{width:18px;}
+}
 </style>
 </head>
 <body>
