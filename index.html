@@ -1176,12 +1176,12 @@ section[id]{scroll-margin-top:0 !important;}
       <h1>Where football<span class="line2">meets <span class="script">girl talk</span></span></h1>
       <p class="hero-sub">The podcast for women who live for the ninety minutes and everything that happens after the final whistle. Match reactions, transfer gossip, and the conversations the boys' club never has.</p>
       <div class="hero-cta-row">
-        <a class="player-pill" href="https://youtu.be/t0pvk4NV8kc?si=mabbZKN9xW9OlUv2" target="_blank" rel="noopener" aria-label="Play BallHerTalk Episode 1 on YouTube">
+        <a class="player-pill" href="https://youtu.be/yeZmJL6ajL8?si=IhfLXaFwSQpdi4NA" target="_blank" rel="noopener" aria-label="Play BallHerTalk Episode 2 on YouTube">
           <span class="play-dot" aria-hidden="true">
             <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><polygon points="2,1 13,7 2,13"/></svg>
           </span>
           <span class="waveform" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span>
-          <span class="player-label">Latest: "BallHerTalk Episode 1"</span>
+          <span class="player-label">Latest: "BallHerTalk Episode 2"</span>
         </a>
       </div>
     </div>
@@ -1349,8 +1349,8 @@ section[id]{scroll-margin-top:0 !important;}
 // ---- Placeholder content (swap these arrays out for real data / API results later) ----
 
 const episodes = [
+  {tag:"Episode 2", title:"BALLHERTALK EPISODE 2", url:"https://youtu.be/yeZmJL6ajL8?si=IhfLXaFwSQpdi4NA", desc:"Football news, CAF Champions League & Confederation Cup, Betway Premiership Matchday 9, the Carling Knockout Cup, and Sell/Bench/Start", thumb:"assets/images/episode-2-thumb.jpg"},
   {tag:"Match Reaction", title:"BALLHERTALK EPISODE 1", dur:"48 min", url:"https://youtu.be/t0pvk4NV8kc?si=mabbZKN9xW9OlUv2", desc:"Breakdown of the first quarter of the season, Refereeing in the PSL, Coaches getting the boot, Season Predictions, CAF Champions League", thumb:"assets/images/episode-1-thumb.jpg"},
-  {tag:"Episode 2", title:"Deadline Day Chaos: Every Move That Actually Mattered", dur:"55 min"},
   {tag:"Episode 3", title:"Why Women's Football Twitter Is Undefeated", dur:"39 min"},
   {tag:"Episode 4", title:"Rating Every Kit Launch This Season", dur:"33 min"},
   {tag:"Episode 5", title:"A Sunday League Captain Tells All", dur:"61 min"},
@@ -1416,10 +1416,10 @@ episodes.forEach((e,i)=>{
         <span class="tag">${e.tag}</span>
         ${e.url ? '' : '<span class="soon-ep">Coming soon</span>'}
         <span class="play-dot" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 14 14" fill="currentColor"><polygon points="2,1 13,7 2,13"/></svg></span>
-        <span class="dur">${e.dur}</span>
+        ${e.dur?`<span class="dur">${e.dur}</span>`:''}
         ${e.url ? '</a>' : '</div>'}
       <div class="ep-body">
-        <h3 class="${i>0?'ep-title-blur':''}">${e.url?`<a href="${e.url}" target="_blank" rel="noopener">${e.title}</a>`:e.title}</h3>
+        <h3 class="${!e.url?'ep-title-blur':''}">${e.url?`<a href="${e.url}" target="_blank" rel="noopener">${e.title}</a>`:e.title}</h3>
         ${e.desc?`<p class="ep-desc">${e.desc}</p>`:''}
         <div class="ep-meta">BallHerTalk · YouTube</div>
       </div>
