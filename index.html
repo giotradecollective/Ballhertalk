@@ -1703,7 +1703,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     cd.innerHTML = box(d,'Days')+box(pad(h),'Hours')+box(pad(m),'Mins')+box(pad(s%60),'Secs');
   }
   function renderLocked(){
-    availText.textContent='Ticket sales open 16 November 2026 at 10:00 (SAST)'; availText.className='tk-avail-text';
+    availText.textContent='Ticket sales open 16 November 2026 at 10:00 (SAST). Limited tickets available.'; availText.className='tk-avail-text';
     bar.parentNode.style.display='none';
     buyBtn.disabled=true; buyBtn.textContent='Opens 16 Nov, 10:00';
     cd.hidden=false; tickCountdown();
