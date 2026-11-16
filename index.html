@@ -1125,6 +1125,7 @@ section[id]{scroll-margin-top:0 !important;}
 .tk-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
 .tk-actions button{padding:13px 22px;border-radius:999px;font:600 15px 'Work Sans',sans-serif;cursor:pointer;border:1px solid var(--ink);}
 .tk-dl{background:var(--ink);color:var(--cream);}
+.tk-hint{margin:14px 0 0;font-size:13px;line-height:1.5;color:var(--ink-soft);}
 .tk-dl:hover{background:var(--rose-dark);border-color:var(--rose-dark);}
 .tk-close{background:transparent;color:var(--ink);}
 .tk-close:hover{background:rgba(24,20,15,.07);}
@@ -1773,16 +1774,17 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
           '<label class="tk-consent"><input type="checkbox" id="tkConsent"><span>I agree to the <button type="button" class="pv-link" data-privacy>Privacy Policy</button> and consent to BallHerTalk using my details to issue my ticket.</span></label>'+
           '<div class="tk-err" id="tkErr" role="alert"></div>'+
           '<button type="submit" class="tk-submit" id="tkSubmit">Complete checkout</button>'+
-          '<p class="tk-note">One ticket per email address. Your ticket downloads straight to your device.</p>'+
+          '<p class="tk-note">One ticket per email address. Your ticket appears on screen straight away, ready to save.</p>'+
         '</form>'+
       '</div>'+
       '<div id="tkDoneView" class="tk-done" hidden>'+
         '<div class="tk-check" aria-hidden="true">&#10003;</div>'+
         '<h3 class="tk-title" id="tkThanks">Thank you!</h3>'+
-        '<p><strong>Your ticket has been downloaded on your device.</strong></p>'+
+        '<p><strong id="tkStatus">Your ticket is ready.</strong></p>'+
         '<p>We can\u2019t wait to see you at the watch party on '+EVENT.date+' at '+EVENT.time+'. Bring your energy, your football friends and your loudest cheer. See you there!</p>'+
         '<img class="tk-preview" id="tkPreview" alt="Your BallHerTalk watch party ticket">'+
         '<div class="tk-actions"><button type="button" class="tk-dl" id="tkAgain">Download ticket again</button><button type="button" class="tk-close" id="tkDone">Close</button></div>'+
+        '<p class="tk-hint">Can\u2019t find it later? Press and hold the ticket above and choose Add to Photos or Save Image. A screenshot works too. Please have it ready at the door.</p>'+
       '</div>'+
     '</div>';
   document.body.appendChild(overlay);
@@ -1830,7 +1832,9 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         $('tkThanks').textContent='Thank you, '+name+'!';
         $('tkPreview').src=URL.createObjectURL(blob);
         $('tkFormView').hidden=true; $('tkDoneView').hidden=false;
-        download();
+        $('tkStatus').textContent = SOFT ? 'Your ticket is ready. Tap Save ticket to keep it on your phone.' : 'Your ticket has been downloaded to your device.';
+        $('tkAgain').textContent = SOFT ? 'Save ticket' : 'Download ticket again';
+        if(!SOFT) download();
       });
     }).catch(function(ex){
       var m=String(ex && ex.message || '');
@@ -1850,7 +1854,22 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     document.body.appendChild(a); a.click();
     setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(a.href); },1500);
   }
-  $('tkAgain').addEventListener('click',download);
+  var UA=navigator.userAgent||'';
+  var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var IN_APP=/FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Snapchat|Twitter/i.test(UA);
+  var SOFT=IS_IOS||IN_APP;
+  function saveTicket(){
+    if(!lastBlob) return;
+    try{
+      var f=new File([lastBlob],'BallHerTalk-Ticket-'+lastName.replace(/[^A-Za-z0-9\-]+/g,'-')+'.png',{type:'image/png'});
+      if(SOFT && navigator.share && navigator.canShare && navigator.canShare({files:[f]})){
+        navigator.share({files:[f],title:'BallHerTalk watch party ticket'}).catch(function(e){ if(!e || e.name!=='AbortError') download(); });
+        return;
+      }
+    }catch(e){}
+    download();
+  }
+  $('tkAgain').addEventListener('click',saveTicket);
 
   // ======================= Ticket image (PNG) =======================
   var W=1600, H=720, FOOT=58, BODY=H-FOOT, SPLIT=1180;
