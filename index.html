@@ -1820,7 +1820,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     submit.disabled=true; submit.textContent='Creating your ticket…';
 
     var request = LIVE
-      ? rpc('purchase_ticket',{p_event:CONFIG.EVENT_SLUG,p_name:name,p_surname:surname,p_email:email})
+      ? rpc('purchase_ticket',{p_event:CONFIG.EVENT_SLUG,p_name:name,p_surname:surname,p_email:email,p_privacy:$('tkConsent').checked})
       : Promise.resolve({ticket_code:'BHT-'+Math.random().toString(36).slice(2,10).toUpperCase(),remaining:null});
 
     request.then(function(res){
