@@ -1102,6 +1102,22 @@ section[id]{scroll-margin-top:0 !important;}
 .tk-submit:hover{background:var(--rose-dark);}
 .tk-submit:disabled{opacity:.65;cursor:wait;}
 .tk-note{margin:12px 0 0;text-align:center;font-size:12.5px;color:var(--ink-soft);}
+.tk-consent{display:flex;gap:10px;align-items:flex-start;margin:4px 0 12px;font-size:13px;line-height:1.45;color:var(--ink);cursor:pointer;}
+.tk-consent input{margin-top:2px;width:18px;height:18px;flex:none;accent-color:var(--rose);cursor:pointer;}
+.pv-link{background:none;border:0;padding:0;font:inherit;color:var(--rose);text-decoration:underline;cursor:pointer;}
+.pv-link:hover{opacity:.8;}
+.pv-overlay{z-index:300;}
+.pv-modal{max-width:640px;}
+.pv-body{font-size:14.5px;line-height:1.6;color:var(--ink);}
+.pv-body h4{margin:22px 0 6px;font:600 15px 'Work Sans',sans-serif;color:var(--ink);}
+.pv-body p{margin:0 0 8px;}
+.pv-body ul{margin:0 0 8px;padding-left:20px;}
+.pv-body li{margin-bottom:5px;}
+.pv-body a{color:var(--rose);}
+.pv-date{font-size:12.5px;color:var(--ink-soft);margin:0 0 14px;}
+.footer-legal{margin:26px 0 0;font-size:13px;line-height:1.55;color:rgba(251,242,236,.62);max-width:900px;}
+.footer-legal .pv-link{color:var(--blush);}
+.nl-privacy{margin:6px 0 0;font-size:12.5px;color:rgba(251,242,236,.6);}
 .tk-done{text-align:center;}
 .tk-check{width:62px;height:62px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;background:var(--blush-soft);color:var(--rose-dark);font-size:32px;}
 .tk-done p{margin:0 0 12px;font-size:15px;line-height:1.55;color:var(--ink-soft);}
@@ -1334,12 +1350,14 @@ section[id]{scroll-margin-top:0 !important;}
           <button type="button" id="nlJoin">Join</button>
         </div>
         <p class="nl-msg" id="nlMsg" role="status" aria-live="polite"></p>
+        <p class="nl-privacy">We will only use your email for updates. Unsubscribe anytime.</p>
       </div>
     </div>
     <div class="footer-bottom">
       <span>© 2026 BallHerTalk. All rights reserved.</span>
       <span>Made for the girls who actually watch the match.</span>
     </div>
+    <p class="footer-legal">We respect your privacy and only use your personal information to issue tickets and share updates you’ve asked for. Read our <button type="button" class="pv-link" data-privacy>Privacy Policy</button>.</p>
     <div class="powered-by">
       <span class="pb-label">Powered by</span>
       <span class="pb-brand"><b>GIOTRADE</b> TECHNOLOGIES&reg;</span>
@@ -1752,6 +1770,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
             '<label class="tk-field"><span>Surname</span><input id="tkSurname" type="text" autocomplete="family-name" maxlength="40" required></label>'+
           '</div>'+
           '<label class="tk-field"><span>Email address</span><input id="tkEmail" type="email" autocomplete="email" maxlength="120" placeholder="you@email.com" required></label>'+
+          '<label class="tk-consent"><input type="checkbox" id="tkConsent"><span>I agree to the <button type="button" class="pv-link" data-privacy>Privacy Policy</button> and consent to BallHerTalk using my details to issue my ticket.</span></label>'+
           '<div class="tk-err" id="tkErr" role="alert"></div>'+
           '<button type="submit" class="tk-submit" id="tkSubmit">Complete checkout</button>'+
           '<p class="tk-note">One ticket per email address. Your ticket downloads straight to your device.</p>'+
@@ -1775,7 +1794,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if(!isOpen()) return;
     lastFocus=document.activeElement;
     $('tkFormView').hidden=false; $('tkDoneView').hidden=true;
-    err.textContent=''; submit.disabled=false; submit.textContent='Complete checkout';
+    err.textContent=''; $('tkConsent').checked=false; submit.disabled=false; submit.textContent='Complete checkout';
     overlay.classList.add('open'); document.body.style.overflow='hidden';
     setTimeout(function(){ $('tkName').focus(); },60);
   }
@@ -1797,6 +1816,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     if(name.length<2){ err.textContent='Please enter your name.'; $('tkName').focus(); return; }
     if(surname.length<2){ err.textContent='Please enter your surname.'; $('tkSurname').focus(); return; }
     if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)){ err.textContent='Please enter a valid email address.'; $('tkEmail').focus(); return; }
+    if(!$('tkConsent').checked){ err.textContent='Please agree to the Privacy Policy to get your ticket.'; $('tkConsent').focus(); return; }
     submit.disabled=true; submit.textContent='Creating your ticket…';
 
     var request = LIVE
@@ -2076,6 +2096,69 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
   }
 })();
 
+</script>
+<div class="tk-overlay pv-overlay" id="pvOverlay">
+  <div class="tk-modal pv-modal" role="dialog" aria-modal="true" aria-labelledby="pvTitle">
+    <button type="button" class="tk-x" id="pvX" aria-label="Close">&times;</button>
+    <p class="tk-kicker">Your information</p>
+    <h3 class="tk-title" id="pvTitle">Privacy Policy</h3>
+    <p class="pv-date">Last updated: 16 November 2026</p>
+    <div class="pv-body">
+      <p>BallHerTalk (&ldquo;we&rdquo;, &ldquo;us&rdquo;) respects your privacy and handles personal information in line with the Protection of Personal Information Act 4 of 2013 (POPIA).</p>
+      <h4>1. What we collect</h4>
+      <p>Your name, surname and email address when you get an event ticket, and your email address if you join our newsletter.</p>
+      <h4>2. Why we collect it</h4>
+      <ul>
+        <li>To issue your ticket and confirm your booking</li>
+        <li>To check you in at the event</li>
+        <li>To contact you about important updates to the event</li>
+        <li>To send you BallHerTalk news, only if you have asked for it</li>
+      </ul>
+      <h4>3. Who helps us run the site</h4>
+      <p>We do not sell or rent your information. To run the website and ticketing, we rely on:</p>
+      <ul>
+        <li><strong>GIOTRADE Technologies</strong>: builds and maintains our website and ticketing system and provides technical support.</li>
+        <li><strong>Supabase</strong>: the secure database where ticket details are stored.</li>
+        <li><strong>WhatsApp (Meta)</strong>: when you join the newsletter, your email address reaches us through a WhatsApp message that you send yourself.</li>
+        <li><strong>Google Fonts</strong>: loads the fonts used on this site, which means your IP address is shared with Google when a page loads.</li>
+      </ul>
+      <p>Where these providers handle ticket details for us, they may only use them to provide their services. Each also has its own privacy policy.</p>
+      <h4>4. How long we keep it</h4>
+      <p>Ticket details are kept only for as long as we need them to run the event, and are deleted afterwards. Newsletter email addresses are kept until you unsubscribe.</p>
+      <h4>5. How we protect it</h4>
+      <p>We take reasonable steps to keep your information secure and to limit who can access it.</p>
+      <h4>6. Your rights</h4>
+      <p>You can ask us what information we hold about you, ask us to correct or delete it, and withdraw your consent to updates at any time. Email our Information Officer at the address below.</p>
+      <h4>7. Complaints</h4>
+      <p>If you are unhappy with how we have handled your information, please contact us first. You can also contact the Information Regulator of South Africa at <a href="https://inforegulator.org.za" target="_blank" rel="noopener">inforegulator.org.za</a>.</p>
+      <h4>8. Changes</h4>
+      <p>We may update this policy from time to time. The date at the top shows when it was last changed.</p>
+      <h4>Contact</h4>
+      <p>Information Officer: Lutendo Ravele<br><a href="mailto:ballhertalk@yahoo.com">ballhertalk@yahoo.com</a></p>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var ov=document.getElementById('pvOverlay'), last=null;
+  if(!ov) return;
+  function openPv(){ last=document.activeElement; ov.classList.add('open'); ov.querySelector('.tk-modal').scrollTop=0; document.body.style.overflow='hidden'; document.getElementById('pvX').focus(); }
+  function closePv(){
+    ov.classList.remove('open');
+    var ticketOpen=document.querySelector('.tk-overlay.open:not(.pv-overlay)');
+    if(!ticketOpen) document.body.style.overflow='';
+    if(last && last.focus) last.focus();
+  }
+  document.addEventListener('click',function(e){
+    var t=e.target.closest && e.target.closest('[data-privacy]');
+    if(t){ e.preventDefault(); openPv(); }
+  });
+  document.getElementById('pvX').addEventListener('click',closePv);
+  ov.addEventListener('mousedown',function(e){ if(e.target===ov) closePv(); });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape' && ov.classList.contains('open')){ e.stopImmediatePropagation(); closePv(); }
+  },true);
+})();
 </script>
 </body>
 </html>
