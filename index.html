@@ -1125,7 +1125,13 @@ section[id]{scroll-margin-top:0 !important;}
 .tk-actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
 .tk-actions button{padding:13px 22px;border-radius:999px;font:600 15px 'Work Sans',sans-serif;cursor:pointer;border:1px solid var(--ink);}
 .tk-dl{background:var(--ink);color:var(--cream);}
-.tk-hint{margin:14px 0 0;font-size:13px;line-height:1.5;color:var(--ink-soft);}
+.tk-hint{margin:16px 0 0;padding:14px 16px;border-radius:12px;background:var(--blush-soft);text-align:left;font-size:14px;line-height:1.5;color:var(--ink);}
+.tk-hint strong{display:block;margin-bottom:6px;font-size:15px;}
+.tk-hint ol{margin:0;padding-left:20px;}
+.tk-hint li{margin:3px 0;}
+.tk-hint .tk-hint-foot{margin:8px 0 0;font-size:13px;color:var(--ink-soft);}
+.tk-preview.tk-pulse{animation:tkPulse 1.2s ease 2;}
+@keyframes tkPulse{50%{box-shadow:0 0 0 6px rgba(214,86,123,.45);}}
 .tk-dl:hover{background:var(--rose-dark);border-color:var(--rose-dark);}
 .tk-close{background:transparent;color:var(--ink);}
 .tk-close:hover{background:rgba(24,20,15,.07);}
@@ -1784,7 +1790,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
         '<p>We can\u2019t wait to see you at the watch party on '+EVENT.date+' at '+EVENT.time+'. Bring your energy, your football friends and your loudest cheer. See you there!</p>'+
         '<img class="tk-preview" id="tkPreview" alt="Your BallHerTalk watch party ticket">'+
         '<div class="tk-actions"><button type="button" class="tk-dl" id="tkAgain">Download ticket again</button><button type="button" class="tk-close" id="tkDone">Close</button></div>'+
-        '<p class="tk-hint">Can\u2019t find it later? Press and hold the ticket above and choose Add to Photos or Save Image. A screenshot works too. Please have it ready at the door.</p>'+
+        '<div class="tk-hint" id="tkHint"></div>'+
       '</div>'+
     '</div>';
   document.body.appendChild(overlay);
@@ -1827,24 +1833,61 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
 
     request.then(function(res){
       if(res && typeof res.remaining==='number'){ remaining=res.remaining; renderAvail(); }
-      return makeTicket(name,surname,res.ticket_code).then(function(blob){
-        lastBlob=blob; lastName=name+'-'+surname;
-        $('tkThanks').textContent='Thank you, '+name+'!';
-        $('tkPreview').src=URL.createObjectURL(blob);
-        $('tkFormView').hidden=true; $('tkDoneView').hidden=false;
-        $('tkStatus').textContent = SOFT ? 'Your ticket is ready. Tap Save ticket to keep it on your phone.' : 'Your ticket has been downloaded to your device.';
-        $('tkAgain').textContent = SOFT ? 'Save ticket' : 'Download ticket again';
-        if(!SOFT) download();
-      });
+      stash(email,{code:res.ticket_code,name:name,surname:surname});
+      return showTicket(name,surname,res.ticket_code,true);
     }).catch(function(ex){
       var m=String(ex && ex.message || '');
       if(m.indexOf('not_open')>-1){ err.textContent='Ticket sales open on 16 November 2026 at 10:00 (SAST).'; }
       else if(m.indexOf('sold_out')>-1){ remaining=0; renderAvail(); err.textContent='Sorry, all 200 tickets have been taken.'; }
-      else if(m.indexOf('already_registered')>-1){ err.textContent='This email address already has a ticket for this event.'; }
+      else if(m.indexOf('already_registered')>-1){
+        var kept=unstash(email);
+        if(kept){
+          submit.textContent='Finding your ticket…';
+          showTicket(kept.name,kept.surname,kept.code,false);
+          return;
+        }
+        err.textContent='This email address already has a ticket. If you can\u2019t find it on this device, please email ballhertalk@yahoo.com and we\u2019ll resend it.';
+      }
       else { err.textContent='Something went wrong. Please check your connection and try again.'; }
       submit.disabled=false; submit.textContent='Complete checkout';
     });
   });
+
+  // ---- keep the ticket code on this device so a failed render never loses a booking --
+  function stash(email,obj){ try{ localStorage.setItem('bht_ticket_'+email,JSON.stringify(obj)); }catch(e){} }
+  function unstash(email){ try{ var v=localStorage.getItem('bht_ticket_'+email); return v?JSON.parse(v):null; }catch(e){ return null; } }
+  function withTimeout(p,ms){ return new Promise(function(res,rej){ var t=setTimeout(function(){ rej(new Error('timeout')); },ms); p.then(function(v){ clearTimeout(t); res(v); },function(e){ clearTimeout(t); rej(e); }); }); }
+
+  var pending=null;
+  function setHint(){
+    var h=$('tkHint');
+    if(SOFT){
+      h.innerHTML='<strong>How to keep your ticket</strong><ol><li>Tap <b>Save ticket</b> below, then choose <b>Save Image</b>.</li><li>Or press and hold the ticket picture above and tap <b>Add to Photos</b>.</li></ol><p class="tk-hint-foot">A screenshot works too. Show your ticket at the door.</p>';
+    } else {
+      h.innerHTML='<strong>Your ticket</strong><p class="tk-hint-foot" style="margin-top:0;color:var(--ink)">It was saved to your Downloads folder. Can\u2019t find it? Tap <b>Download ticket again</b>, or take a screenshot. Show your ticket at the door.</p>';
+    }
+  }
+  function showTicket(name,surname,code,fresh){
+    pending={name:name,surname:surname,code:code};
+    return withTimeout(makeTicket(name,surname,code),20000).then(function(blob){
+      pending=null; lastBlob=blob; lastName=name+'-'+surname;
+      $('tkThanks').textContent=(fresh?'Thank you, ':'Welcome back, ')+name+'!';
+      $('tkPreview').style.display=''; $('tkPreview').src=URL.createObjectURL(blob);
+      $('tkFormView').hidden=true; $('tkDoneView').hidden=false;
+      $('tkStatus').textContent = SOFT ? 'Your ticket is ready. Tap Save ticket to keep it on your phone.' : (fresh?'Your ticket has been downloaded to your device.':'Your ticket is ready.');
+      $('tkAgain').textContent = SOFT ? 'Save ticket' : 'Download ticket again';
+      setHint();
+      if(!SOFT) download();
+    }).catch(function(){
+      // booking exists but the picture failed: never dead-end the person
+      $('tkThanks').textContent='Your ticket is booked, '+name+'!';
+      $('tkFormView').hidden=true; $('tkDoneView').hidden=false;
+      $('tkPreview').removeAttribute('src'); $('tkPreview').style.display='none';
+      $('tkStatus').textContent='Ticket code: '+code;
+      $('tkAgain').textContent='Create my ticket image';
+      $('tkHint').innerHTML='<strong>One more step</strong><p class="tk-hint-foot" style="margin-top:0;color:var(--ink)">We couldn\u2019t draw your ticket picture. Tap <b>Create my ticket image</b> to try again, and take a screenshot of your code in the meantime.</p>';
+    });
+  }
 
   function download(){
     if(!lastBlob) return;
@@ -1852,21 +1895,29 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
     a.href=URL.createObjectURL(lastBlob);
     a.download='BallHerTalk-Ticket-'+lastName.replace(/[^A-Za-z0-9\-]+/g,'-')+'.png';
     document.body.appendChild(a); a.click();
-    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(a.href); },1500);
+    setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(a.href); },30000);
   }
   var UA=navigator.userAgent||'';
   var IS_IOS=/iPad|iPhone|iPod/.test(UA)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
-  var IN_APP=/FBAN|FBAV|Instagram|Line\/|MicroMessenger|TikTok|Snapchat|Twitter/i.test(UA);
+  var IN_APP=/FBAN|FBAV|FB_IAB|Instagram|Line\/|MicroMessenger|TikTok|musical_ly|Snapchat|Twitter|LinkedInApp|Pinterest|WhatsApp|Telegram|GSA\/|; wv\)/i.test(UA);
   var SOFT=IS_IOS||IN_APP;
+  function pressHold(){
+    var pv=$('tkPreview'); pv.classList.remove('tk-pulse'); void pv.offsetWidth; pv.classList.add('tk-pulse');
+    try{ pv.scrollIntoView({behavior:'smooth',block:'center'}); }catch(e){}
+  }
   function saveTicket(){
-    if(!lastBlob) return;
+    if(!lastBlob){
+      if(pending){ var p=pending; $('tkAgain').disabled=true; showTicket(p.name,p.surname,p.code,true).then(function(){ $('tkAgain').disabled=false; }); }
+      return;
+    }
     try{
       var f=new File([lastBlob],'BallHerTalk-Ticket-'+lastName.replace(/[^A-Za-z0-9\-]+/g,'-')+'.png',{type:'image/png'});
       if(SOFT && navigator.share && navigator.canShare && navigator.canShare({files:[f]})){
-        navigator.share({files:[f],title:'BallHerTalk watch party ticket'}).catch(function(e){ if(!e || e.name!=='AbortError') download(); });
+        navigator.share({files:[f],title:'BallHerTalk watch party ticket'}).catch(function(e){ if(!e || e.name!=='AbortError') pressHold(); });
         return;
       }
     }catch(e){}
+    if(SOFT){ pressHold(); return; }   // iOS / in-app browsers: file downloads are unreliable, so point to press-and-hold
     download();
   }
   $('tkAgain').addEventListener('click',saveTicket);
@@ -1892,6 +1943,7 @@ var qrcode=function(){var t=function(t,r){var e=t,n=g[r],o=null,i=0,a=null,u=[],
       document.fonts.load('400 28px "Work Sans"'),document.fonts.load('600 28px "Work Sans"'),document.fonts.load('700 28px "Work Sans"')
     ]).catch(function(){});
   }
+  var _fontsReady=fontsReady; fontsReady=function(){ return Promise.race([_fontsReady(),new Promise(function(r){ setTimeout(r,3000); })]); };
   function sp(ctx,t,x,y,s,align){           // text with manual letter-spacing
     var w=0,i,ws=[]; for(i=0;i<t.length;i++){ ws[i]=ctx.measureText(t[i]).width; w+=ws[i]+(i<t.length-1?s:0); }
     var cx = align==='center'? x-w/2 : align==='right'? x-w : x;
